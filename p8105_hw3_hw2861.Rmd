@@ -5,8 +5,84 @@ date: "2022-10-09"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+```{r setup}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
 ```
 
+## Question 2
 
+First, i will Load and tidy the **Accelerometer** data.
+```{r Accelerometer}
+Accelerometer = read_csv("Dataset/accel_data.csv") %>%
+janitor::clean_names() %>% 
+mutate(weekday_vs_weekend = recode(day,"Monday" = "Weekday", 
+ "Tuesday"= "Weekday", "Wednesday" = "Weekday", "Thursday" = "Weekday",
+ "Friday" = "Weekday", "Saturday" = "Weekend", "Sunday" = "Weekend", )) %>%
+select(week, day_id, day, weekday_vs_weekend, everything())%>%
+pivot_longer(
+activity_1:activity_1440,
+names_prefix = "activity_",
+names_to = "activity_minute",
+values_to = "count")
+
+
+```
+
+The resulting dataset contains accelerometer data for an 63 year-old male over a five-week period. In the resulting dataset **Accelerometer** , there are **`r nrow(Accelerometer)`** observations and **`r ncol(Accelerometer)`** variables. These variables are **`r names(Accelerometer)`**.
+
+
+
+I aggregate across minutes to create a total activity variable for each day
+```{r Accel_everyday table}
+Accel_everyday = Accelerometer %>% 
+  group_by(day_id,week,day)%>% 
+  summarize(day_activity= sum(count))
+
+knitr::kable(Accel_everyday)
+```
+
+Based on the table：
+
+Activity counts at the weekends are generally higher than Activity counts on the weekdays in the first 2 weeks.But On the last two Saturdays during week4 and week5 (Day24 and Day31), the patients' activity counts decreased significantly.
+
+
+
+Make a single-panel plot that shows the 24-hour activity time courses for each day
+```{r plot}
+Accelerometer %>% 
+  group_by(day_id) %>%
+  mutate(activity_minute=as.numeric(activity_minute))%>%
+  ggplot(aes(x = activity_minute, y = count, color = day)) + 
+  geom_point() + geom_line() +
+  labs(
+    x = "Time",
+    y = "Activity Counts",
+    title = "24-hour activity time courses") + 
+  scale_x_continuous(
+    limits = c(0, 1440),
+    breaks = c(0, 360, 720, 1080, 1440), 
+    labels = c("12am","6am", "12pm", "6pm", "12am")
+    )
+```
+
+Based on this graph:
+
+Activity counts are generally lower between midnight and 6am. Also, the activity counts of the patient are lower than 2500 for the majority of the time. It appears that the highest activity counts are around 9pm to 10pm, especially on Fridays.
