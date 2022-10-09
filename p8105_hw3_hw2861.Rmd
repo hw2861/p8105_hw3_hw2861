@@ -8,6 +8,7 @@ output: github_document
 
 ```{r setup}
 library(tidyverse)
+library(p8105.datasets)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -86,3 +87,32 @@ Accelerometer %>%
 Based on this graph:
 
 Activity counts are generally lower between midnight and 6am. Also, the activity counts of the patient are lower than 2500 for the majority of the time. It appears that the highest activity counts are around 9pm to 10pm, especially on Fridays.
+
+
+
+
+## Question 3
+
+### Short description of the dataset
+
+Load the **ny_noaa** dataset
+```{r ny_noaa}
+data("ny_noaa")
+```
+
+The **ny_noaa** dataset is about the weather data for all New York state weather stations between  **`r min(ny_noaa$data)`**  and  **`r max(ny_noaa$data)`**.
+The **ny_noaa** dataset contains **`r ncol(ny_noaa)`** columns(variables) and **`r nrow(ny_noaa)`** rows(observations).
+
+These variables in this dataset are **`r names(ny_noaa)`**. Two of the key variables are the id and date, which tells us about the id of Weather station and the date of observation. With the key variables tmax and tmin, we can know the Maximum temperature and Minimum temperature of the day. The variable like prcp gives us the information about the Precipitation (tenths of mm). The two variables like snow and snwd give us the information about snowfall and snowdepth in mm.
+
+
+```{r Percentage_missing_data}
+colMeans(is.na(ny_noaa))%>%
+knitr::kable(col.names = c('Percentage_miss'))
+```
+
+For the variables **prcp**, there are **`r sum(is.na(ny_noaa$prcp))`** missing values in total. And the percentage of missing values in variables **prcp** is  **5.62%** .
+For the variables **snow**, there are **`r sum(is.na(ny_noaa$snow))`** missing values in total. And the percentage of missing values in variables **snow** is  **14.69%** .
+For the variables **snwd**, there are **`r sum(is.na(ny_noaa$snwd))`** missing values in total. And the percentage of missing values in variables **snwd** is  **22.80%** .
+For the variables **tmax**, there are **`r sum(is.na(ny_noaa$tmax))`** missing values in total. And the percentage of missing values in variables **tmax** is  **43.71%** .
+For the variables **tmin**, there are **`r sum(is.na(ny_noaa$tmin))`** missing values in total. And the percentage of missing values in variables **tmin** is also  **43.71%** .
