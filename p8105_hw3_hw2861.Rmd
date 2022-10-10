@@ -9,6 +9,7 @@ output: github_document
 ```{r setup}
 library(tidyverse)
 library(p8105.datasets)
+library(patchwork)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -145,7 +146,7 @@ For snowfall, The most commonly observed values is **0**. This commonly observed
 ### Part2 in Q3
 Make a two-panel plot showing the average max temperature in January and in July in each station across years.
 ```{r two-panel plot}
-ny_noaa_clean %>% 
+ ny_noaa_clean %>% 
   filter(month == c(1, 7)) %>%
   group_by(id,year,month) %>% 
   summarize(temp_mean_max = mean(tmax),na.rm = TRUE) %>% 
@@ -154,10 +155,10 @@ ny_noaa_clean %>%
     labs(
     title = "Average max Temp in Jan and Jul in each station across years",
     x = "Year",
-    y = "Average max temperature (°C)") +
+    y = "Average max temperature(degrees C)") +
  scale_x_continuous(
     limits = c(1980, 2010),
-    breaks = c(1980, 1985, 1990, 1995,2000,2005, 2010), 
+    breaks = c(1980, 1985, 1990, 1995,2000,2005,2010), 
     labels = c("1980","1985","1990","1995", "2000", "2005","2010")
     ) +
   facet_grid(. ~ month) +
@@ -167,8 +168,50 @@ ny_noaa_clean %>%
 ```
 
 Based on the two-panel plot,
-We can observe that the average maximum temperature in January is usually in the range of -10°C to 10°C, with the mean around 0°C. There were some outliers in January 1982, when they had an average max temperature around -10°C. Also, outliers were seen in January 2008, at around -5°C.
+We can observe that the average maximum temperature in January is usually in the range of -10°C to 10°C, with the mean of (average maximum temperature) around 0°C. There were some outliers in January 1982, when they had an average max temperature around -10°C. Also, outliers were seen in January 2008, at around -5°C.
 
 We can observe that the average maximum temperature in July is usually in the range of 20°C to 30°C, with the mean around 27°C. There are more outliers for average max temperatures in July than in January. The most obvious one appeared in July 1988, a weather station reported an average maximum temperature of around 14°C for that month. The other obvious outlier appeared in July 2010, a weather station reported an average maximum temperature of around 33°C for that month.
 
 Based on the line generated from geom_smooth, We can tell that the average maximum temperature across years fluctuates more drastically in January than in July.
+
+
+### Part3 in Q3
+(i) tmax vs tmin for the full dataset
+```{r tmax vs tmin}
+noaa_tmax_tmin=ny_noaa_clean %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+    geom_hex()+
+    labs(
+    title = "The relationship between tmin and tmax",
+    x = "Minimum temperature (degrees C)",
+    y = "Maximum temperature (degrees C)")
+
+noaa_tmax_tmin
+```
+
+(ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+```{r  the distribution of snowfall values}
+noaa_snowfall = ny_noaa_clean %>% 
+   filter(0 < snow, snow < 100) %>%
+  ggplot(aes(x = year, y = snow)) + 
+  geom_violin() + 
+    labs(
+    title = "The distribution of snowfall values (0-100mm) by years",
+    x = "Year",
+    y = "Snowfall (mm)") +
+    scale_x_continuous(
+    limits = c(1980, 2010),
+    breaks = c(1980, 1985, 1990, 1995,2000,2005, 2010), 
+    labels = c("1980","1985","1990","1995", "2000", "2005","2010")
+    )  
+   
+noaa_snowfall     
+```
+
+(iii) patchwork
+```{r  patchwork}
+noaa_tmax_tmin / noaa_snowfall
+```
+
+The above plot shows tmax vs tmin for the full dataset.
+The blow plot shows the distribution of snowfall values greater than 0 and less than 100 separately by year.
