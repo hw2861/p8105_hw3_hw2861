@@ -45,6 +45,11 @@ This dataset contains `r nrow(instacart)` rows and `r ncol(instacart)` columns, 
 Below is a table summarizing the number of items ordered from aisle. In total, there are 134 aisles, with fresh vegetables and fresh fruits holding the most items ordered by far.
 
 
+```{r}
+instacart %>% 
+  count(aisle) %>% 
+  arrange(desc(n))
+```
 
 
 
