@@ -14,6 +14,7 @@ library(patchwork)
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
+
 options(
   ggplot2.continuous.colour = "viridis",
   ggplot2.continuous.fill = "viridis"
@@ -95,7 +96,7 @@ instacart %>%
 
 ## Question 2
 
-First, i will Load and tidy the **Accelerometer** data.
+### First, i will Load and tidy the **Accelerometer** data.
 ```{r Accelerometer}
 Accelerometer = read_csv("Dataset/accel_data.csv") %>%
 janitor::clean_names() %>% 
@@ -116,7 +117,7 @@ The resulting dataset contains accelerometer data for an 63 year-old male over a
 
 
 
-I aggregate across minutes to create a total activity variable for each day
+### I aggregate across minutes to create a total activity variable for each day
 ```{r Accel_everyday table}
 Accel_everyday = Accelerometer %>% 
   group_by(day_id,week,day)%>% 
@@ -131,7 +132,7 @@ Activity counts at the weekends are generally higher than Activity counts on the
 
 
 
-Make a single-panel plot that shows the 24-hour activity time courses for each day
+### Make a single-panel plot that shows the 24-hour activity time courses for each day
 ```{r plot}
 Accelerometer %>% 
   mutate(day = forcats::fct_relevel(day, c("Monday", "Tuesday", "Wednesday","Thursday", "Friday","Saturday", "Sunday")))%>%
